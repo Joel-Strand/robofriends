@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import CardList from "./CardList";
-import SearchBox from "./SearchBox.js";
-import { robots } from "./robots";
-import "./cogs/app.css";
+import CardList from "../components/CardList";
+import SearchBox from "../components/SearchBox.js";
+import Scroll from "../components/Scroll.js";
+import "../styles/app.css";
 
 class App extends Component {
   constructor() {
@@ -11,7 +11,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.setState({ robots: robots });
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((response) => response.json())
+      .then((users) => this.setState({ robots: users }));
   }
 
   // Reference vid 301 for more info on arrow functions.
@@ -26,11 +28,17 @@ class App extends Component {
         .includes(this.state.searchField.toLowerCase());
     });
 
+    if (this.state.robots.length === 0) {
+      return <h1> Loading</h1>;
+    }
+
     return (
       <div className="tc">
         <h1 className="f1">Robofriends</h1>
         <SearchBox searchChange={this.onSearchChange} />
-        <CardList robots={filteredRobots} />
+        <Scroll>
+          <CardList robots={filteredRobots} />
+        </Scroll>
       </div>
     );
   }
